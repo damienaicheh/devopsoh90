@@ -1,5 +1,8 @@
 on:
   workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '**.md'
   push:
     branches:
       - features/*
@@ -31,6 +34,7 @@ jobs:
         rm main.json
 
     - name: Validate bicep
+      working-directory: iac/bicep
       run: |
           if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
               az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
@@ -41,6 +45,7 @@ jobs:
           fi
 
     - name: Preview Deployment
+      working-directory: iac/bicep
       run: |
         if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
             az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
@@ -50,18 +55,12 @@ jobs:
             az deployment sub what-if --name "${BUILD_ID}" --template-file main.bicep --location "${LOCATION}"
         fi
 
-
-      # Log into Azure
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       # Deploy Bicep file
-    - name: deploy
-      uses: azure/arm-deploy@v1
-      with:
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-        resourceGroupName: ${{ secrets.AZURE_RG }}
-        template: ./main.bicep
-        parameters: 'storagePrefix=mystore storageSKU=Standard_LRS'
-        failOnStdErr: false
+    # - name: deploy
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+    #     resourceGroupName: ${{ secrets.AZURE_RG }}
+    #     template: ./main.bicep
+    #     parameters: 'storagePrefix=mystore storageSKU=Standard_LRS'
+    #     failOnStdErr: false
