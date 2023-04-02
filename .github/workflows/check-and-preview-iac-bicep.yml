@@ -5,14 +5,14 @@ on:
       - features/*
       - main
 
-name: Check and preview IaC Bicep
+name: Check and preview Bicep
 
 env:
   RESOURCES_PREFIX: devopsoh90
   BUILD_ID: 1
 
 jobs:
-  build-and-deploy:
+  check-and-preview-bicep:
     runs-on: ubuntu-latest
     steps:
 
@@ -33,11 +33,11 @@ jobs:
     - name: Validate bicep
       run: |
           if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
-              az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location ""${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+              az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
           elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
-              az deployment sub validate --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location ""${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
+              az deployment sub validate --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
           else
-              az deployment sub validate --name "${BUILD_ID}" --template-file main.bicep --location ""${{ secrets.LOCATION }}"
+              az deployment sub validate --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
           fi
 
     - name: Preview Deployment
