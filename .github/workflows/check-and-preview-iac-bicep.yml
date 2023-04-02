@@ -48,11 +48,11 @@ jobs:
       working-directory: iac/bicep
       run: |
         if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
-            az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+            az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
         elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
-            az deployment sub what-if --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters uniquer="${UNIQUER}"
+            az deployment sub what-if --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
         else
-            az deployment sub what-if --name "${BUILD_ID}" --template-file main.bicep --location "${LOCATION}"
+            az deployment sub what-if --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
         fi
 
       # Deploy Bicep file
