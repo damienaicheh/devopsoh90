@@ -33,7 +33,7 @@ Test('/healthcheck/user', function (t) {
          */
         t.test('test  get operation', function (t) {
             Mockgen().requests({
-                path: '/healthcheck/user',
+                path: '/healthcheck/users',
                 operation: 'get'
             }, function (err, mock) {
                 var request;
@@ -68,7 +68,7 @@ Test('/healthcheck/user', function (t) {
                     if (Object.keys(response).length <= 0) {
                         response = res.text;
                     }
-                    t.ok(validate(response), 'Valid responsssse');
+                    t.ok(validate(response), 'Valid response');
                     t.error(validate.errors, 'No validation errors');
                     t.end();
                 });
