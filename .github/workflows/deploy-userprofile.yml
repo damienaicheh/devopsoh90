@@ -52,7 +52,7 @@ jobs:
             az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --verbose --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
   staging:
-    name: "Staging"
+    name: "Staging (Blue)"
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -75,3 +75,36 @@ jobs:
           app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
           images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
           slot-name: 'staging'
+
+      
+      - name: Check the deployed service health check
+        uses: jtalk/url-health-check-action@v2
+        with:
+          url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/healthcheck/${{ env.API_NAME }}
+          follow-redirect: true
+          max-attempts: 60
+          retry-delay: 10s
+          retry-all: true
+
+  production:
+    name: "Production (Green)"
+    needs:
+      - staging
+      - build
+    runs-on: ubuntu-latest
+    environment:
+      name: poi-production
+      url: "https://${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}.azurewebsites.net/api/version/${{ env.API_NAME }}"
+    env:
+      RESOURCES_PREFIX: ${{ needs.build.outputs.RESOURCES_PREFIX }}
+    steps:
+      - name: "Azure Login"
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: "Swap WebApp slots"
+        uses: Azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp deployment slot swap --resource-group ${{ env.RESOURCES_PREFIX }}rg --name ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }} --slot staging --target-slot production
