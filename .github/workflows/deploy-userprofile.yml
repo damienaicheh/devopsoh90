@@ -36,7 +36,7 @@ jobs:
           # echo "DOCKER_IMAGE_FULL_NAME=${DOCKER_IMAGE_FULL_NAME}" >> ${GITHUB_ENV}
 
           # Set for next Job
-          echo "::set-output name=DOCKER_IMAGE_FULL_NAME::$DOCKER_IMAGE_FULL_NAME"
+          echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
         id: dockerfullname
 
       - name: "Azure Login"
@@ -47,7 +47,7 @@ jobs:
       - name: "Build Docker image using Azure Container Registry"
         uses: Azure/cli@v1
         with:
-          inlineScript: az acr build --image ${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }} --registry ${RESOURCES_PREFIX}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
+          inlineScript: az acr build --image ${{ steps.dockerfullname.outputs.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }} --registry ${RESOURCES_PREFIX}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
   production:
     name: "Production"
