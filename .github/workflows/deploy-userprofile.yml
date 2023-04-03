@@ -48,8 +48,8 @@ jobs:
             az account show
             az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --verbose --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
-  production:
-    name: "Production"
+  staging:
+    name: "Staging"
     needs: build
     runs-on: ubuntu-latest
     environment:
