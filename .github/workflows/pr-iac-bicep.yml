@@ -1,4 +1,4 @@
-name: Check and preview Bicep
+name: PR Bicep
 
 on:
   workflow_dispatch:
