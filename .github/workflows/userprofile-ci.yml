@@ -45,7 +45,7 @@ jobs:
     if: ${{ failure() && needs.build_tests.steps.node-tests.outcome != 'success' }}
     needs: build_tests
     steps:
-        - run:  gh pr comment GITHUB_RUN_NUMBER --body "This looks great, lets get it deployed."
+        - run:  gh pr comment ${{ github.event.number }} --body "This looks great, lets get it deployed."
           name: GitHub Pull Request Comment
 
       # - uses: actions/github-script@v6
