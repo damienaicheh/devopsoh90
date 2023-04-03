@@ -16,7 +16,7 @@ defaults:
     working-directory: iac/terraform
 
 jobs:
-  preview-terraform:
+  preview:
     runs-on: ubuntu-latest
     outputs:
       TFPLAN_EXITCODE: ${{ steps.tfplan.outputs.exitcode }}
