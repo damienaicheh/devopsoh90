@@ -6,12 +6,12 @@ on:
     paths:
       - .github/workflows/pr-userprofile.yml
       - apis/userprofile/**
-  push:
-    branches:
-      - main
-      - features/*
+  # push:
+  #   branches:
+  #     - main
+      # - features/*
     # paths:
-    #   - .github/workflows/userprofile-ci.yml
+    #   - .github/workflows/pr-userprofile.yml
     #   - apis/userprofile/**
 
 jobs:
