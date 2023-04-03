@@ -9,18 +9,16 @@ on:
   push:
     branches:
       - main
-      - features/*
-    paths:
-      - .github/workflows/userprofile-ci.yml
-      - apis/userprofile/**
+    #   - features/*
+    # paths:
+    #   - .github/workflows/userprofile-ci.yml
+    #   - apis/userprofile/**
 
 jobs:
   build_tests:
+    runs-on: ubuntu-latest
     env:
       NODE_VERSION: 12.x
-
-    runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3.5.0
         name: Checkout code
