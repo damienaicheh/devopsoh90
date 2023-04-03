@@ -47,7 +47,7 @@ Test('/healthcheck/user', function (t) {
                 if (mock.request.body) {
                     //Send the request body
                     request = request.send(mock.request.body);
-                } else if (mock.request.formData){
+                } else if (mock.request.formData) {
                     //Send the request form data
                     request = request.send(mock.request.formData);
                     //Set the Content-Type as application/x-www-form-urlencoded
@@ -68,7 +68,7 @@ Test('/healthcheck/user', function (t) {
                     if (Object.keys(response).length <= 0) {
                         response = res.text;
                     }
-                    t.ok(validate(response), 'Valid response');
+                    t.ok(validate(response), 'Valid responsssse');
                     t.error(validate.errors, 'No validation errors');
                     t.end();
                 });
