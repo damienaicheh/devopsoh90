@@ -46,6 +46,8 @@ jobs:
     needs: build_tests
     steps:
         - run:  gh pr comment ${{ github.event.number }} --body "This looks great, lets get it deployed."
+          env:
+            GH_TOKEN: ${{ github.token }}
           name: GitHub Pull Request Comment
 
       # - uses: actions/github-script@v6
