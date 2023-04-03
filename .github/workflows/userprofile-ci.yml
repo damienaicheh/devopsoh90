@@ -42,7 +42,7 @@ jobs:
     
   comment:
     runs-on: ubuntu-latest
-    if: ${{ failure() && build_tests.steps.node-tests.outcome != 'success' }}
+    if: ${{ failure() && needs.build_tests.steps.node-tests.outcome != 'success' }}
     needs: build_tests
     steps:
       - uses: actions/github-script@v6
