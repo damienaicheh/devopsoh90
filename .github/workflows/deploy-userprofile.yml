@@ -5,13 +5,13 @@ on:
   push:
     branches:
       - main
-      # - features/*
+      - features/*
     # paths:
     #   - apis/userprofile/**
 
 env:
   RESOURCES_PREFIX: devopsoh90
-  WORKDIR: "apis/userprofile/web"
+  WORKDIR: "apis/userprofile"
   DOCKER_IMAGE_BASE_NAME: "devopsoh/api-userprofile"
   API_NAME: "userprofile"
 
@@ -30,7 +30,10 @@ jobs:
 
       - name: Get docker image full name
         run: |
-          DOCKER_IMAGE_FULL_NAME=${RESOURCES_PREFIX}cr.azurecr.io/${{ env.DOCKER_IMAGE_BASE_NAME }}
+          DOCKER_IMAGE_FULL_NAME=${{ env.RESOURCES_PREFIX }}cr.azurecr.io/${{ env.DOCKER_IMAGE_BASE_NAME }}
+
+          # Set for current Job
+          echo "DOCKER_IMAGE_FULL_NAME=${DOCKER_IMAGE_FULL_NAME}" >> ${GITHUB_ENV}
 
           # Set for next Job
           echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
@@ -44,14 +47,16 @@ jobs:
       - name: "Build Docker image using Azure Container Registry"
         uses: Azure/cli@v1
         with:
-          inlineScript: az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
+          inlineScript: |
+            az account show
+            az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --verbose --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
-  production:
-    name: "Production"
+  staging:
+    name: "Staging"
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: poi-production
+      name: poi-staging
       url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
     env:
       DOCKER_IMAGE_FULL_NAME: "${{ needs.build.outputs.DOCKER_IMAGE_FULL_NAME }}"
@@ -69,3 +74,4 @@ jobs:
         with:
           app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
           images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
+          slot-name: 'staging'
