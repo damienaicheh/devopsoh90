@@ -13,6 +13,7 @@
 ```text
 [ ] Yes
 [ ] No
+[ ] Maybe
 ```
 
 ## Pull Request Type
