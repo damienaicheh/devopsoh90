@@ -37,4 +37,31 @@ jobs:
         name: Build
 
       - run: npm run test
+        id: node-tests
         name: Tests
+    
+  comment:
+    runs-on: ubuntu-latest
+    if: ${{ failure() && steps.node-tests.outcome != 'success' }}
+    needs: build_tests
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "### Unit Test `failure`
+                    <details>
+                    <summary>Workflow details</summary>
+
+                    Workflow name: `${{ github.workflow }}`
+                    Action: `${{ github.event_name }}`
+                    Job: `${{ github.job }}`
+                    PR: #${{ github.event.number }}
+                    </details>
+
+                    Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+                    Pusher: @${{ github.actor }}"
+            })
