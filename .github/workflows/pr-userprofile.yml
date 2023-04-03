@@ -14,21 +14,25 @@ on:
     #   - .github/workflows/pr-userprofile.yml
     #   - apis/userprofile/**
 
+env:
+  NODEJS_VERSION: "12"
+  WORKDIR: apis/userprofile
+
 jobs:
   build_tests:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apis/userprofile
+        working-directory: ${{ env.WORKDIR }}
 
     steps:
       - uses: actions/checkout@v3.5.0
         name: Checkout code
 
-      - name: Use Node.js
+      - name: Use Node.js ${{ env.NODEJS_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: 12
+          node-version: ${{ env.NODEJS_VERSION }}
 
       - run: npm ci
         name: Install packages
