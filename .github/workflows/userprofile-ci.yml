@@ -18,7 +18,7 @@ jobs:
   build_tests:
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: 12.x
+      NODE_VERSION: 12.0
     steps:
       - uses: actions/checkout@v3.5.0
         name: Checkout code
