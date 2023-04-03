@@ -2,36 +2,37 @@ name: User Profile CI
 
 on: 
   workflow_dispatch:
-  push:
-    branches:
-      - features/*
   pull_request:
     paths:
       - .github/workflows/pr-userprofile.yml
       - apis/userprofile/**
-  push:
-    branches:
-      - main
-    #   - features/*
+  # push:
+  #   branches:
+  #     - main
+      # - features/*
     # paths:
-    #   - .github/workflows/userprofile-ci.yml
+    #   - .github/workflows/pr-userprofile.yml
     #   - apis/userprofile/**
+
+env:
+  NODEJS_VERSION: "12"
+  WORKDIR: apis/userprofile
 
 jobs:
   build_tests:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apis/userprofile
+        working-directory: ${{ env.WORKDIR }}
 
     steps:
       - uses: actions/checkout@v3.5.0
         name: Checkout code
 
-      - name: Use Node.js
+      - name: Use Node.js ${{ env.NODEJS_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: 12
+          node-version: ${{ env.NODEJS_VERSION }}
 
       - run: npm ci
         name: Install packages
@@ -49,7 +50,7 @@ jobs:
           reporter: jest-junit
 
       - name: "Create an issue (bug)"
-        if: failure() && github.event_name != 'pull_request' && steps.node-tests.outcome != 'success' }}
+        if: failure() && github.event_name != 'pull_request' && steps.node-tests.outcome != 'success'
         run: |
           body='### Unit Test `failure`
           <details>
@@ -69,7 +70,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Add comment to PR
-        if: failure() && github.event_name == 'pull_request' && steps.node-tests.outcome != 'success' }}
+        if: failure() && github.event_name == 'pull_request' && steps.node-tests.outcome != 'success'
         uses: actions/github-script@v6
         with:
           script: |
