@@ -6,8 +6,8 @@ on:
     branches:
       - main
       - features/*
-    paths:
-      - apis/userprofile/**
+    # paths:
+    #   - apis/userprofile/**
 
 env:
   RESOURCES_PREFIX: devopsoh90
