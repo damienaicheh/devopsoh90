@@ -52,20 +52,19 @@ jobs:
           uses: actions/github-script@v6
           with:
             script: |
-              const body = `
-                         ### Unit Test failure ❌
-                         <details>
-                         <summary>Workflow details</summary>
- 
-                         Workflow name: \${{ github.workflow }}
-                         Action: \${{ github.event_name }}
-                         Job: \${{ github.job }}
-                         PR: #\${{ github.event.number }}
-                         </details>
- 
-                         Test details: [Run #\${{ github.run_id }}](\${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }})
-                         Pusher: @\${{ github.actor }}
-                         `;
+              const body = `### Unit Test failure ❌
+              <details>
+              <summary>Workflow details</summary>
+
+              Workflow name: \${{ github.workflow }}
+              Action: \${{ github.event_name }}
+              Job: \${{ github.job }}
+              PR: #\${{ github.event.number }}
+              </details>
+
+              Test details: [Run #\${{ github.run_id }}](\${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }})
+              Pusher: @\${{ github.actor }}
+              `;
 
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
