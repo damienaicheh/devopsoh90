@@ -1,0 +1,37 @@
+name: User Profile CI
+
+on: 
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - apis/userprofile/**
+  push:
+    branches:
+      - main
+    paths:
+      - apis/userprofile/**
+
+jobs:
+  build_tests:
+    env:
+      NODE_VERSION: 12.x
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3.5.0
+        name: Checkout code
+
+      - name: Use Node.js $NODE_VERSION
+        uses: actions/setup-node@v3
+        with:
+          node-version: $NODE_VERSION
+
+      - run: npm ci
+        name: Install packages
+      
+      - run: npm run build --if-present
+        name: Build
+
+      - run: npm run test
+        name: Tests

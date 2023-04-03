@@ -1,3 +1,5 @@
+name: Check and preview Bicep
+
 on:
   workflow_dispatch:
   # pull_request:
@@ -8,8 +10,6 @@ on:
       - main
     paths:
       - iac/bicep/**
-
-name: Check and preview Bicep
 
 env:
   RESOURCES_PREFIX: devopsoh90
