@@ -53,7 +53,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: poi-production
+      name: poi-staging
       url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
     env:
       DOCKER_IMAGE_FULL_NAME: "${{ needs.build.outputs.DOCKER_IMAGE_FULL_NAME }}"
@@ -71,3 +71,4 @@ jobs:
         with:
           app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
           images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
+          slot-name: 'staging'
