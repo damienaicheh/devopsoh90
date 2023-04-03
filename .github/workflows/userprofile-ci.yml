@@ -48,10 +48,21 @@ jobs:
         - uses: actions/checkout@v3.5.0
           name: Checkout code
 
-        - run:  gh pr comment ${{ github.event.number }} --body "This looks great, lets get it deployed."
-          env:
-            GH_TOKEN: ${{ github.token }}
-          name: GitHub Pull Request Comment
+        - uses: actions/github-script@v3
+          with:
+            github-token: ${{ github.token }}
+            script: |
+              github.issues.createComment({
+                issue_number: github.event.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '👋 Thanks for reporting!'
+              })
+            
+        # - run:  gh pr comment ${{ github.event.number }} --body "This looks great, lets get it deployed."
+        #   env:
+        #     GH_TOKEN: ${{ github.token }}
+        #   name: GitHub Pull Request Comment
 
       # - uses: actions/github-script@v6
       #   with:
