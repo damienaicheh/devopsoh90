@@ -1,0 +1,71 @@
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   paths-ignore:
+  #     - '**.md'
+  push:
+    branches:
+      - main
+    paths:
+      - iac/bicep/**
+
+name: Check and preview Bicep
+
+env:
+  RESOURCES_PREFIX: devopsoh90
+  BUILD_ID: 1 # Use GITHUB_RUN_NUMBER instead
+
+jobs:
+  check-and-preview-bicep:
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v3.5.0
+      name: Checkout code
+
+    - name: Azure Login
+      run: |
+        env
+
+    - name: Azure Login
+      run: |
+          az login --service-principal --username "${{ secrets.ARM_CLIENT_ID }}" --password "${{ secrets.ARM_CLIENT_SECRET }}" --tenant "${{ secrets.ARM_TENANT_ID }}"
+          az account set --subscription "${{ secrets.ARM_SUBSCRIPTION_ID }}"
+
+    - name: Lint bicep
+      working-directory: iac/bicep
+      run: |
+        az bicep build --file main.bicep
+        rm main.json
+
+    - name: Validate bicep
+      working-directory: iac/bicep
+      run: |
+          if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
+              az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+          elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
+              az deployment sub validate --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
+          else
+              az deployment sub validate --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
+          fi
+
+    - name: Preview Deployment
+      working-directory: iac/bicep
+      run: |
+        if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
+            az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+        elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
+            az deployment sub what-if --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
+        else
+            az deployment sub what-if --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
+        fi
+
+      # Deploy Bicep file
+    # - name: deploy
+    #   uses: azure/arm-deploy@v1
+    #   with:
+    #     subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+    #     resourceGroupName: ${{ secrets.AZURE_RG }}
+    #     template: ./main.bicep
+    #     parameters: 'storagePrefix=mystore storageSKU=Standard_LRS'
+    #     failOnStdErr: false
