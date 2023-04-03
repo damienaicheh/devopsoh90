@@ -45,17 +45,25 @@ jobs:
     if: ${{ failure() && needs.build_tests.steps.node-tests.outcome != 'success' }}
     needs: build_tests
     steps:
-        - uses: actions/checkout@v3.5.0
-          name: Checkout code
+        # - uses: actions/checkout@v3.5.0
+        #   name: Checkout code
 
         - name: Add comment to PR
           uses: actions/github-script@v6
           with:
             script: |
-              const name = '${{ github.workflow }}';
-              const url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
-              const success = '${{ job.status }}' === 'success';
-              const body = `${name}: ${success ? 'succeeded ✅' : 'failed ❌'}\n${url}`;
+              const body = `### Unit Test `failure ❌`
+                            <details>
+                            <summary>Workflow details</summary>
+
+                            Workflow name: `${{ github.workflow }}`
+                            Action: `${{ github.event_name }}`
+                            Job: `${{ github.job }}`
+                            PR: #${{ github.event.number }}
+                            </details>
+
+                            Test details: [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+                            Pusher: @${{ github.actor }}`;
 
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
