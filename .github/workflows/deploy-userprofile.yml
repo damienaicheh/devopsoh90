@@ -80,7 +80,7 @@ jobs:
       - name: Check the deployed service health check
         uses: jtalk/url-health-check-action@v2
         with:
-          url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/healthcheck/${{ env.API_NAME }}
+          url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/healthcheck/user
           follow-redirect: true
           max-attempts: 60
           retry-delay: 10s
