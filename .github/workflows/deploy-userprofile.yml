@@ -11,7 +11,7 @@ on:
 
 env:
   RESOURCES_PREFIX: devopsoh90
-  WORKDIR: "apis/userprofile/web"
+  WORKDIR: "apis/userprofile"
   DOCKER_IMAGE_BASE_NAME: "devopsoh/api-userprofile"
   API_NAME: "userprofile"
 
