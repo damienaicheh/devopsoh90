@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - .github/workflows/userprofile-ci.yml
       - apis/userprofile/**
   push:
     branches:
       - main
       - features/*
     paths:
+      - .github/workflows/userprofile-ci.yml
       - apis/userprofile/**
 
 jobs:
