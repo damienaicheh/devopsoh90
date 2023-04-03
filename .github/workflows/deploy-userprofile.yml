@@ -14,14 +14,13 @@ env:
   WORKDIR: "apis/poi/web"
   DOCKER_IMAGE_BASE_NAME: "devopsoh/api-poi"
   API_NAME: "poi"
-  
-defaults:
-  run:
-    working-directory: ${{ env.WORKDIR }}
 
 jobs:
   build:
     name: "Build"
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
     runs-on: ubuntu-latest
     outputs:
       DOCKER_IMAGE_FULL_NAME: ${{ steps.dockerfullname.outputs.DOCKER_IMAGE_FULL_NAME }}
