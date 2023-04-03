@@ -17,8 +17,7 @@ on:
 jobs:
   build_tests:
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 12
+
     steps:
       - uses: actions/checkout@v3.5.0
         name: Checkout code
@@ -26,13 +25,16 @@ jobs:
       - name: Use Node.js $NODE_VERSION
         uses: actions/setup-node@v3
         with:
-          node-version: $NODE_VERSION
+          node-version: 12
 
       - run: npm ci
+        working-directory: apis/userprofile
         name: Install packages
       
       - run: npm run build --if-present
+        working-directory: apis/userprofile
         name: Build
 
       - run: npm run test
+        working-directory: apis/userprofile
         name: Tests
