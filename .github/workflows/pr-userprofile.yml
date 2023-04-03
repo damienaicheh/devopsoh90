@@ -2,9 +2,12 @@ name: User Profile CI
 
 on: 
   workflow_dispatch:
+  push:
+    branches:
+      - features/*
   pull_request:
     paths:
-      - .github/workflows/userprofile-ci.yml
+      - .github/workflows/pr-userprofile.yml
       - apis/userprofile/**
   push:
     branches:
