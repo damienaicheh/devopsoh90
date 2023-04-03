@@ -19,8 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v2.7.0
+    - uses: actions/checkout@v3.5.0
       name: Checkout code
+
+    - name: Azure Login
+      run: |
+        env
 
     - name: Azure Login
       run: |
