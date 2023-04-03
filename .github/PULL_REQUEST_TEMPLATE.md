@@ -13,7 +13,6 @@
 ```text
 [ ] Yes
 [ ] No
-[ ] Maybe
 ```
 
 ## Pull Request Type
@@ -28,6 +27,7 @@ What kind of change does this Pull Request introduce?
 [ ] Code style update (formatting, local variables)
 [ ] Refactoring (no functional changes, no api changes)
 [ ] Documentation content changes
+[ ] Tests
 [ ] Other... Please describe:
 ```
 
