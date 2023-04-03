@@ -1,0 +1,71 @@
+name: User Profile CD
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      # - features/*
+    # paths:
+    #   - apis/userprofile/**
+
+env:
+  RESOURCES_PREFIX: devopsoh90
+  WORKDIR: "apis/poi/web"
+  DOCKER_IMAGE_BASE_NAME: "devopsoh/api-poi"
+  API_NAME: "poi"
+
+jobs:
+  build:
+    name: "Build"
+    defaults:
+      run:
+        working-directory: ${{ env.WORKDIR }}
+    runs-on: ubuntu-latest
+    outputs:
+      DOCKER_IMAGE_FULL_NAME: ${{ steps.dockerfullname.outputs.DOCKER_IMAGE_FULL_NAME }}
+    steps:
+      - uses: actions/checkout@v3.5.0
+        name: Checkout code
+
+      - name: Get docker image full name
+        run: |
+          DOCKER_IMAGE_FULL_NAME=${RESOURCES_PREFIX}cr.azurecr.io/${{ env.DOCKER_IMAGE_BASE_NAME }}
+
+          # Set for next Job
+          echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
+        id: dockerfullname
+
+      - name: "Azure Login"
+        uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+
+      - name: "Build Docker image using Azure Container Registry"
+        uses: Azure/cli@v1
+        with:
+          inlineScript: az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
+ 
+  production:
+    name: "Production"
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: poi-production
+      url: "${{ steps.deploy-to-webapp.outputs.webapp-url }}/api/version/${{ env.API_NAME }}"
+    env:
+      DOCKER_IMAGE_FULL_NAME: "${{ needs.build.outputs.DOCKER_IMAGE_FULL_NAME }}"
+    steps:
+      # Login to Azure with Service Principal
+      - name: "Azure Login"
+        uses: Azure/login@v1
+        with:
+          creds: '{"clientId":"${{ secrets.ARM_CLIENT_ID }}","clientSecret":"${{ secrets.ARM_CLIENT_SECRET }}","subscriptionId":"${{ secrets.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.ARM_TENANT_ID }}"}'
+
+      # Set new Docker image in WebApp
+      - name: Azure WebApp
+        id: deploy-to-webapp
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: ${{ env.RESOURCES_PREFIX }}${{ env.API_NAME }}
+          images: "${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }}"
