@@ -47,7 +47,7 @@ jobs:
         with:
           name: Test results
           path: "${{ env.WORKDIR }}/reports/userprofile-report.xml"
-          reporter: java-junit
+          reporter: jest-junit
 
       - name: "Create an issue (bug)"
         if: failure() && github.event_name != 'pull_request' && steps.node-tests.outcome != 'success'
