@@ -7,12 +7,13 @@ on:
     branches:
       - features/*
       - main
+    # paths:
+    #   - iac/bicep/**
 
 name: Check and preview Bicep
 
 env:
   RESOURCES_PREFIX: devopsoh90
-  BUILD_ID: 1
 
 jobs:
   check-and-preview-bicep:
@@ -41,22 +42,22 @@ jobs:
       working-directory: iac/bicep
       run: |
           if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
-              az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+              az deployment sub validate --name "${RESOURCES_PREFIX}-${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
           elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
-              az deployment sub validate --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
+              az deployment sub validate --name "${UNIQUER}-${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
           else
-              az deployment sub validate --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
+              az deployment sub validate --name "${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
           fi
 
     - name: Preview Deployment
       working-directory: iac/bicep
       run: |
         if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
-            az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
+            az deployment sub what-if --name "${RESOURCES_PREFIX}-${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
         elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
-            az deployment sub what-if --name "${UNIQUER}-${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
+            az deployment sub what-if --name "${UNIQUER}-${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}" --parameters uniquer="${UNIQUER}"
         else
-            az deployment sub what-if --name "${BUILD_ID}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
+            az deployment sub what-if --name "${GITHUB_RUN_NUMBER}" --template-file main.bicep --location "${{ secrets.LOCATION }}"
         fi
 
       # Deploy Bicep file
