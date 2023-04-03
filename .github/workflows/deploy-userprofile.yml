@@ -11,9 +11,9 @@ on:
 
 env:
   RESOURCES_PREFIX: devopsoh90
-  WORKDIR: "apis/poi/web"
-  DOCKER_IMAGE_BASE_NAME: "devopsoh/api-poi"
-  API_NAME: "poi"
+  WORKDIR: "apis/userprofile/web"
+  DOCKER_IMAGE_BASE_NAME: "devopsoh/api-userprofile"
+  API_NAME: "userprofile"
 
 jobs:
   build:
