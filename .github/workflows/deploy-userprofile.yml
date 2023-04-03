@@ -36,7 +36,7 @@ jobs:
           # echo "DOCKER_IMAGE_FULL_NAME=${DOCKER_IMAGE_FULL_NAME}" >> ${GITHUB_ENV}
 
           # Set for next Job
-          echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
+          echo "::set-output name=DOCKER_IMAGE_FULL_NAME::$DOCKER_IMAGE_FULL_NAME"
         id: dockerfullname
 
       - name: "Azure Login"
