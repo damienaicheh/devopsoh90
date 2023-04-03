@@ -1,0 +1,42 @@
+name: Check and preview Terraform
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - features/*
+  pull_request:
+    branches:
+      - main
+    paths:
+      - iac/terraform/**
+
+jobs:
+  check-and-preview-terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: iac/terraform
+    steps:
+
+    - uses: actions/checkout@v3.5.0
+      name: Checkout code
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform lint
+      run: |
+          terraform fmt -check -recursive
+          if [ $? -ne 0 ]; then
+              _error "Terraform files are not properly formatted!"
+              exit 1
+          fi
+
+    - name: Terraform Disable Local Backend
+      run: |
+        terraform init -backend=false
+
+    - name: Terraform Validate
+      run: |
+        terraform validate
