@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - iac/terraform/**
+      - .github/workflows/pr-iac-terraform.yml
 
 jobs:
   check-and-preview-terraform:
