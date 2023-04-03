@@ -47,7 +47,7 @@ jobs:
       - name: "Build Docker image using Azure Container Registry"
         uses: Azure/cli@v1
         with:
-          inlineScript: az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --registry ${RESOURCES_PREFIX}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
+          inlineScript: az acr build --image ${{ env.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }} --registry ${RESOURCES_PREFIX}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
   production:
     name: "Production"
