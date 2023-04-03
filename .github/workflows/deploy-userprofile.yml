@@ -3,10 +3,11 @@ name: User Profile CD
 on: 
   workflow_dispatch:
   push:
+    branches:
+      - main
+      - features/*
     paths:
       - apis/userprofile/**
-
-
 
 env:
   RESOURCES_PREFIX: devopsoh90
