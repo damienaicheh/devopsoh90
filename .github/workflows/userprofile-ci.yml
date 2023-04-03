@@ -55,6 +55,9 @@ jobs:
               const body = `### Unit Test failure ❌
               <details>
               <summary>Workflow details</summary>
+
+              Workflow name: ${{ github.workflow }}
+
               `;
 
               await github.rest.issues.createComment({
