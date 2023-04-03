@@ -32,9 +32,6 @@ jobs:
         run: |
           DOCKER_IMAGE_FULL_NAME=${RESOURCES_PREFIX}cr.azurecr.io/${{ env.DOCKER_IMAGE_BASE_NAME }}
 
-          # Set for current Job
-          # echo "DOCKER_IMAGE_FULL_NAME=${DOCKER_IMAGE_FULL_NAME}" >> ${GITHUB_ENV}
-
           # Set for next Job
           echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
         id: dockerfullname
