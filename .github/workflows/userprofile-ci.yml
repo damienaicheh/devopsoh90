@@ -45,6 +45,9 @@ jobs:
     if: ${{ failure() && needs.build_tests.steps.node-tests.outcome != 'success' }}
     needs: build_tests
     steps:
+        - uses: actions/checkout@v3.5.0
+          name: Checkout code
+
         - run:  gh pr comment ${{ github.event.number }} --body "This looks great, lets get it deployed."
           env:
             GH_TOKEN: ${{ github.token }}
