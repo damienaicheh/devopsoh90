@@ -32,6 +32,9 @@ jobs:
         run: |
           DOCKER_IMAGE_FULL_NAME=${{ env.RESOURCES_PREFIX }}cr.azurecr.io/${{ env.DOCKER_IMAGE_BASE_NAME }}
 
+          # Set for current Job
+          echo "DOCKER_IMAGE_FULL_NAME=${DOCKER_IMAGE_FULL_NAME}" >> ${GITHUB_ENV}
+
           # Set for next Job
           echo "::set-output name=DOCKER_IMAGE_FULL_NAME::${DOCKER_IMAGE_FULL_NAME}"
         id: dockerfullname
@@ -46,7 +49,7 @@ jobs:
         with:
           inlineScript: |
             az account show
-            az acr build --image ${{ steps.dockerfullname.outputs.DOCKER_IMAGE_FULL_NAME }}:${{ github.run_id }} --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --verbose --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
+            az acr build --image ${{ env.DOCKER_IMAGE_BASE_NAME }}:${{ github.run_id }} --subscription ${{ secrets.ARM_SUBSCRIPTION_ID }} --registry ${{ env.RESOURCES_PREFIX }}cr.azurecr.io --build-arg build_version=${{ github.run_id }} --verbose --file ${{ env.WORKDIR }}/Dockerfile ${{ env.WORKDIR }}
  
   staging:
     name: "Staging"
