@@ -49,7 +49,7 @@ jobs:
           reporter: jest-junit
 
       - name: "Create an issue (bug)"
-        if: failure() && github.event_name != 'pull_request' && steps.node-tests.outcome != 'success' }}
+        if: failure() && github.event_name != 'pull_request' && steps.node-tests.outcome != 'success'
         run: |
           body='### Unit Test `failure`
           <details>
