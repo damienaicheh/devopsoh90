@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - features/*
-  pull_request:
-    branches:
-      - main
-    paths:
-      - iac/terraform/**
-      - .github/workflows/pr-iac-terraform.yml
+      - features/debug
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - iac/terraform/**
+  #     - .github/workflows/pr-iac-terraform.yml
       # _error "Terraform files are not properly formatted!"
 jobs:
   check-and-preview-terraform:
