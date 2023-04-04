@@ -24,14 +24,9 @@ resource "null_resource" "db_datainit" {
 ## DOCKER                                 ##
 ############################################
 
-resource "null_resource" "docker_simulator" {
-  depends_on = [
-    azurerm_container_registry.container_registry
-  ]
-  provisioner "local-exec" {
-    command = "az acr build --image devopsoh/simulator:latest --registry ${azurerm_container_registry.container_registry.login_server} --file ../../support/simulator/Dockerfile ../../support/simulator"
-  }
-}
+zadjazoidzad 
+azdazdza
+azdzad
 
 resource "null_resource" "docker_tripviewer" {
   provisioner "local-exec" {
